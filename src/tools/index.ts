@@ -1,4 +1,10 @@
+/**
+ * Tools module - All available tools
+ */
+
 import type { ToolDefinition } from '../types.js'
+
+// Core tools
 import { BashTool } from './BashTool.js'
 import { EditFileTool } from './EditFileTool.js'
 import { GlobTool } from './GlobTool.js'
@@ -26,8 +32,16 @@ import { AnalyzeProjectTool } from './project/AnalyzeProjectTool.js'
 import { RunTestsTool } from './project/RunTestsTool.js'
 import { LintCodeTool } from './project/LintCodeTool.js'
 
+// Git tools
+import { GitStatusTool } from './git/GitStatusTool.js'
+import { GitDiffTool } from './git/itDiffTool.js'
+import { GitLogTool } from './git/itLogTool.js'
+import { GitCommitTool } from './git/itCommitTool.js'
+import { GitBranchTool } from './git/GitBranchTool.js'
+import { GitStashTool } from './git/GitStashTool.js'
+
 export const ALL_TOOLS: ToolDefinition[] = [
-  // Core tools
+  // Core tools (7)
   BashTool,
   ReadFileTool,
   WriteFileTool,
@@ -36,7 +50,7 @@ export const ALL_TOOLS: ToolDefinition[] = [
   GrepTool,
   WebSearchTool,
 
-  // Filesystem tools
+  // Filesystem tools (6)
   ListDirectoryTool,
   GetFileInfoTool,
   CopyFileTool,
@@ -44,24 +58,68 @@ export const ALL_TOOLS: ToolDefinition[] = [
   DeleteFileTool,
   CreateDirectoryTool,
 
-  // Search tools
+  // Search tools (4)
   CodeSearchTool,
   FindReferencesTool,
   FindDefinitionsTool,
   GetFileStatsTool,
 
-  // Project tools
+  // Project tools (3)
   AnalyzeProjectTool,
   RunTestsTool,
   LintCodeTool,
+
+  // Git tools (6)
+  GitStatusTool,
+  GitDiffTool,
+  GitLogTool,
+  GitCommitTool,
+  GitBranchTool,
+  GitStashTool,
 ]
 
-/** Look up a tool by name */
+/**
+ * Look up a tool by name
+ */
 export function getTool(name: string): ToolDefinition | undefined {
   return ALL_TOOLS.find(t => t.name === name)
 }
 
-export { BashTool, ReadFileTool, WriteFileTool, EditFileTool, GlobTool, GrepTool, WebSearchTool }
-export { ListDirectoryTool, GetFileInfoTool, CopyFileTool, MoveFileTool, DeleteFileTool, CreateDirectoryTool }
-export { CodeSearchTool, FindReferencesTool, FindDefinitionsTool, GetFileStatsTool }
-export { AnalyzeProjectTool, RunTestsTool, LintCodeTool }
+// Re-export all tools for convenience
+export {
+  // Core
+  BashTool,
+  ReadFileTool,
+  WriteFileTool,
+  EditFileTool,
+  GlobTool,
+  GrepTool,
+  WebSearchTool,
+
+  // Filesystem
+  ListDirectoryTool,
+  GetFileInfoTool,
+  CopyFileTool,
+  MoveFileTool,
+  DeleteFileTool,
+  CreateDirectoryTool,
+
+  // Search
+  CodeSearchTool,
+  FindReferencesTool,
+  FindDefinitionsTool,
+  GetFileStatsTool,
+
+  // Project
+  AnalyzeProjectTool,
+  RunTestsTool,
+  LintCodeTool,
+
+  // Git
+  GitStatusTool,
+  GitDiffTool,
+  GitLogTool,
+  GitCommitTool,
+  GitBranchTool,
+  GitStashTool,
+}
