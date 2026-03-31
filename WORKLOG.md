@@ -294,3 +294,271 @@
   - 提供错误恢复建议
 
 ---
+
+## 工作会话 #4 - 2026-03-31
+
+### 🎯 目标
+- 实现阶段 1.4: 错误处理增强
+- 实现错误类型体系和处理中间件
+
+### ✅ 完成内容
+
+#### 错误处理系统 (Error Handling System)
+**文件创建:**
+- `src/errors/types.ts` - 错误类型定义、错误码、恢复建议
+- `src/errors/ConfigError.ts` - 配置相关错误
+- `src/errors/StorageError.ts` - 存储相关错误
+- `src/errors/ToolError.ts` - 工具相关错误
+- `src/errors/NetworkError.ts` - 网络相关错误
+- `src/errors/LLMError.ts` - LLM 相关错误
+- `src/errors/ErrorHandler.ts` - 错误处理中间件、重试逻辑
+- `src/errors/index.ts` - 模块导出
+
+**功能实现:**
+1. 错误码体系
+   - 10 个类别（1000-9999）
+   - 每个类别都有具体的错误码
+   - 错误码便于分类和追踪
+
+2. 错误类型
+   - MiniClaudeError 基类
+   - ConfigError 系列: ConfigNotFoundError, ConfigInvalidError, ConfigReadError 等
+   - StorageError 系列: SessionNotFoundError, SessionLoadError 等
+   - ToolError 系列: ToolExecutionError, ToolTimeoutError, ToolPermissionDeniedError 等
+   - NetworkError 系列: NetworkTimeoutError, NetworkConnectionRefusedError 等
+   - LLMError 系列: LLMConnectionError, LLMRateLimitError, LLMQuotaExceededError 等
+
+3. 错误恢复建议
+   - 每个错误码都有对应的恢复建议
+   - 建议包含操作描述和具体命令
+   - 帮助用户快速解决问题
+
+4. 错误处理中间件
+   - ErrorHandler 类：统一错误处理
+   - 支持日志集成
+   - 自动格式化错误消息
+   - 错误上下文保留
+
+5. 重试机制
+   - withRetry: 带指数退避的自动重试
+   - 可配置重试次数、延迟、倍增因子
+   - 可自定义重试条件
+
+6. 降级处理
+   - withFallback: 提供降级方案
+   - 自动记录错误到日志
+   - 支持同步和异步函数
+
+7. 全局错误处理
+   - setupGlobalErrorHandlers: 设置全局错误处理器
+   - 捕获未处理的异常和 Promise 拒绝
+
+### 🧪 测试验证
+- ✅ 类型检查通过 (`npm run typecheck`)
+- ✅ 错误创建和消息格式化测试通过
+- ✅ 错误恢复建议测试通过
+- ✅ 错误 JSON 序列化测试通过
+- ✅ 重试机制测试通过
+- ✅ 错误码查找测试通过
+
+### 📊 代码统计
+- 新增文件: 7 个
+- 新增代码行数: ~800 行
+- 错误码: 50+ 个
+- 错误类型: 15+ 个
+
+### 🐛 遇到的问题
+1. **setTimeout 类型错误**
+   - 问题: setTimeout 的类型推断问题
+   - 解决: 添加类型断言 `setTimeout as any`
+
+### 📝 备注
+- 错误码按功能模块分组（配置 2000-2999，存储 3000-3999 等）
+- 所有错误都包含原始错误信息（如果有）
+- 错误建议提供可执行的命令
+- 重试使用指数退避策略
+- 支持自定义重试条件
+- 错误处理器可以全局或局部使用
+
+### 🔄 下次工作计划
+- 阶段 2: 工具扩展
+  - 创建 `src/tools/filesystem/` 目录
+  - 实现文件系统工具 (ListDirectory, CopyFile, DeleteFile 等)
+  - 创建 `src/tools/search/` 目录
+  - 实现代码搜索工具 (CodeSearch, FindReferences 等)
+
+---
+
+## 工作会话 #5 - 2026-03-31
+
+### 🎯 目标
+- 实现阶段 2.1: 文件系统工具扩展
+- 实现 6 个新的文件系统工具
+
+### ✅ 完成内容
+
+#### 文件系统工具 (Filesystem Tools)
+**文件创建:**
+- `src/tools/filesystem/ListDirectoryTool.ts` - 列出目录内容
+- `src/tools/filesystem/GetFileInfoTool.ts` - 获取文件元数据
+- `src/tools/filesystem/CopyFileTool.ts` - 复制文件
+- `src/tools/filesystem/MoveFileTool.ts` - 移动/重命名文件
+- `src/tools/filesystem/DeleteFileTool.ts` - 删除文件/目录
+- `src/tools/filesystem/CreateDirectoryTool.ts` - 创建目录
+- `src/tools/filesystem/index.ts` - 模块导出
+
+**功能实现:**
+1. ListDirectoryTool
+   - 列出目录内容（支持递归）
+   - 显示/隐藏文件控制
+   - 文件类型图标显示
+   - 扩展名过滤
+
+2. GetFileInfoTool
+   - 获取文件大小、类型、时间戳
+   - 自动格式化文件大小
+   - 支持文件和目录
+
+3. CopyFileTool
+   - 复制文件或目录
+   - 自动创建目标目录
+   - 覆盖保护机制
+   - 显示复制后文件大小
+
+4. MoveFileTool
+   - 移动或重命名文件
+   - 覆盖保护机制
+
+5. DeleteFileTool
+   - 删除文件或目录
+   - 递归删除确认
+   - 强制删除选项
+
+6. CreateDirectoryTool
+   - 创建新目录
+   - 嵌套目录创建支持
+   - 重复检查
+
+### 🧪 测试验证
+- ✅ 类型检查通过 (\`npm run typecheck\`)
+- ✅ ListDirectoryTool 测试通过
+- ✅ GetFileInfoTool 测试通过
+- ✅ CopyFileTool 测试通过
+- ✅ MoveFileTool 测试通过
+- ✅ CreateDirectoryTool 测试通过
+- ✅ DeleteFileTool 测试通过
+- ✅ 工具注册成功（12 个工具总数）
+
+### 📊 代码统计
+- 新增文件: 7 个
+- 新增代码行数: ~500 行
+- 新增工具: 6 个
+- 总工具数: 12 个（从 7 个增加到 12 个）
+
+### 🐛 遇到的问题
+- 无
+
+### 📝 备注
+- 所有工具都有 requiresPermission 标记
+- 文件大小自动格式化（B/KB/MB/GB）
+- 目录显示使用 emoji 图标
+- 递归操作需要显式确认
+- 覆盖操作默认需要用户同意
+
+### 🔄 下次工作计划
+- 阶段 2.2: 代码搜索工具
+  - 创建 \`src/tools/search/\` 目录
+  - 实现 CodeSearchTool (ripgrep)
+  - 实现 FindReferencesTool
+  - 实现 FindDefinitionsTool
+  - 实现 GetFileStatsTool
+
+---
+
+## 工作会话 #6 - 2026-04-01
+
+### 🎯 目标
+- 实现阶段 2.2: 代码搜索工具
+- 实现代码搜索和统计功能
+
+### ✅ 完成内容
+
+#### 代码搜索工具 (Search Tools)
+**文件创建:**
+- `src/tools/search/CodeSearchTool.ts` - 代码搜索（ripgrep）
+- `src/tools/search/FindReferencesTool.ts` - 查找符号引用
+- `src/tools/search/FindDefinitionsTool.ts` - 查找符号定义
+- `src/tools/search/GetFileStatsTool.ts` - 文件统计信息
+- `src/tools/search/index.ts` - 模块导出
+
+**功能实现:**
+1. CodeSearchTool
+   - 使用 ripgrep 进行快速代码搜索
+   - 支持正则表达式
+   - 文件模式过滤（*.ts, *.js 等）
+   - 语言过滤（TypeScript, JavaScript, Python 等）
+   - 大小写敏感/不敏感
+   - 最大结果数限制
+   - 显示文件名和匹配数
+
+2. FindReferencesTool
+   - 查找符号的所有引用
+   - 词边界搜索（精确匹配）
+   - 上下文显示（2 行）
+   - 行号和列号显示
+   - 可选排除定义位置
+   - 语言过滤支持
+
+3. FindDefinitionsTool
+   - 查找符号的定义位置
+   - 匹配常见定义模式
+   - 支持多种语言的定义语法
+   - （function, class, interface, type, enum, const, let, var, def）
+   - 1 行上下文显示
+
+4. GetFileStatsTool
+   - 详细的代码统计
+   - 文件和目录分析
+   - 递归分析支持
+   - 行数统计（总行、代码行、注释行、空行）
+   - 字符数统计
+   - 语言检测和统计
+   - 注释率计算
+   - 最大文件识别
+   - 支持多种语言的注释检测
+
+### 🧪 测试验证
+- ✅ 类型检查通过 (\`npm run typecheck\`)
+- ✅ 4 个搜索工具创建成功
+- ✅ 工具注册成功（16 个工具总数）
+
+### 📊 代码统计
+- 新增文件: 5 个
+- 新增代码行数: ~1,300 行
+- 新增工具: 4 个
+- 总工具数: 16 个（从 12 个增加到 16 个）
+
+### 🐛 遇到的问题
+1. **TypeScript 转义字符错误**
+   - 问题: 模板字符串中的反斜杠转义问题
+   - 解决: 移除 String.raw，使用普通字符串
+
+2. **语法错误**
+   - 问题: 文件末尾缺少闭合括号
+   - 解决: 重新创建文件修复语法
+
+### 📝 备注
+- 依赖 ripgrep (rg) 进行快速代码搜索
+- 如果 ripgrep 未安装，提示用户安装
+- GetFileStatsTool 的注释检测支持 20+ 种语言
+- 文件统计包含详细的比率计算
+- 搜索结果限制以避免输出过多
+
+### 🔄 下次工作计划
+- 阶段 2.3: 项目分析工具
+  - 创建 \`src/tools/project/\` 目录
+  - 实现 AnalyzeProjectTool（项目结构分析）
+  - 实现 RunTestsTool（运行测试）
+  - 实现 LintCodeTool（代码检查）
+
+---

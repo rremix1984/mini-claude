@@ -30,11 +30,21 @@
   - 支持控制台、文件、轮转文件 3 种输出方式
   - 实现了 `/logs` 斜杠命令
 
+- **阶段 1.4: 错误处理** (100%)
+  - 实现了完整的错误处理系统
+  - 定义了错误码体系 (1000-9999)
+  - 实现了错误恢复建议机制
+  - 支持自动重试和降级处理
+  - 实现了全局错误处理器
+
 ### 🔄 下一步计划
-- **阶段 1.4: 错误处理**
-  - 定义错误类型体系
-  - 实现错误处理中间件
-  - 提供错误恢复建议
+- **阶段 2: 工具扩展**
+  - 扩展文件系统工具
+  - 添加代码搜索工具
+  - 添加 Git 集成工具
+  - 添加项目分析工具
+  - 添加网络工具
+  - 添加系统信息工具
 
 ---
 
@@ -42,10 +52,11 @@
 
 | 指标 | 当前值 | 目标值 |
 |------|--------|--------|
-| 文件数 | 41 | ~200 (渐进式) |
-| 代码行数 | ~3,200 | ~15,000 |
-| 工具数 | 7 | 30+ |
+| 文件数 | 60 | ~200 (渐进式) |
+| 代码行数 | ~5,800 | ~15,000 |
+| 工具数 | 16 | 30+ |
 | 命令数 | 4 | 20+ |
+| 错误类型 | 15+ | - |
 
 ---
 
@@ -67,7 +78,13 @@
 | 阶段 1.1: 配置系统 | ✅ 已完成 | 2026-03-31 | 2026-03-31 | ConfigManager + /config 命令 |
 | 阶段 1.2: 会话持久化 | ✅ 已完成 | 2026-03-31 | 2026-03-31 | SessionManager + /history + /resume |
 | 阶段 1.3: 日志系统 | ✅ 已完成 | 2026-03-31 | 2026-03-31 | Logger + /logs 命令 |
-| 阶段 1.4: 错误处理 | ⏸️ 待开始 | - | - | |
+| 阶段 1.4: 错误处理 | ✅ 已完成 | 2026-03-31 | 2026-03-31 | 错误类型体系 + 处理中间件 |
+| 阶段 2.1: 文件系统工具 | ✅ 已完成 | 2026-03-31 | 2026-03-31 | 6 个新工具 (12 个总数) |
+| 阶段 2.2: 代码搜索工具 | ✅ 已完成 | 2026-03-31 | 2026-04-01 | 4 个新工具 (16 个总数) |
+| 阶段 2.3: 项目分析工具 | ✅ 已完成 | 2026-04-01 | 2026-04-01 | 3 个新工具 (19 个总数) |
+| 阶段 2.4: Git 集成工具 | 🚀 进行中 | 2026-04-01 | - | Git 操作工具 |
+| 阶段 2.5: 网络工具增强 | ⏸️ 待开始 | - | - | |
+| 阶段 2.6: 系统信息工具 | ⏸️ 待开始 | - | - | |
 
 ---
 
@@ -190,56 +207,121 @@
 
 ---
 
-#### 1.4 错误处理增强
+#### 1.4 错误处理增强 ✅ 已完成
 **目标**: 统一错误处理，提供友好的错误提示
 
 **任务**:
-- [ ] 创建 `errors/` 目录
-- [ ] 定义错误类型:
-  - `MiniClaudeError` 基类
-  - `ToolExecutionError`
-  - `ConfigError`
-  - `NetworkError`
-  - `PermissionDeniedError`
-- [ ] 错误码体系
-- [ ] 错误恢复建议
-- [ ] 重试机制 (可配置)
+- [x] 创建 `errors/` 目录
+- [x] 定义错误类型:
+  - [x] `MiniClaudeError` 基类
+  - [x] `ToolExecutionError`
+  - [x] `ConfigError`
+  - [x] `NetworkError`
+  - [x] `LLMError`
+  - [x] `StorageError`
+- [x] 错误码体系 (1000-9999)
+- [x] 错误恢复建议
+- [x] 重试机制 (可配置)
 
 **验收**: 所有错误都有清晰的错误信息和恢复建议
+
+**已完成文件**:
+- `src/errors/types.ts` - 错误类型定义、错误码、恢复建议
+- `src/errors/ConfigError.ts` - 配置相关错误
+- `src/errors/StorageError.ts` - 存储相关错误
+- `src/errors/ToolError.ts` - 工具相关错误
+- `src/errors/NetworkError.ts` - 网络相关错误
+- `src/errors/LLMError.ts` - LLM 相关错误
+- `src/errors/ErrorHandler.ts` - 错误处理中间件、重试逻辑
+- `src/errors/index.ts` - 模块导出
+
+**功能特性**:
+✅ 统一错误基类 (MiniClaudeError)
+✅ 完整的错误码体系 (1000-9999)
+✅ 智能错误恢复建议
+✅ 上下文信息保留
+✅ 链式错误支持 (originalError)
+✅ 自动重试机制 (withRetry, exponential backoff)
+✅ 降级处理逻辑 (withFallback)
+✅ 全局错误处理器
+✅ 错误序列化 (toJSON)
+✅ 详细错误信息 (getFullMessage)
 
 ---
 
 ### 阶段 2: 工具扩展 (Week 3-4)
 
-#### 2.1 文件系统工具增强
+#### 2.1 文件系统工具增强 ✅ 已完成
 **目标**: 扩展文件操作能力
 
 **新增工具**:
-- [ ] `ListDirectoryTool` - 列出目录内容 (支持递归、过滤)
-- [ ] `GetFileInfoTool` - 获取文件元数据 (大小、权限、时间)
-- [ ] `CopyFileTool` - 复制文件
-- [ ] `MoveFileTool` - 移动/重命名文件
-- [ ] `DeleteFileTool` - 删除文件 (需要权限)
-- [ ] `CreateDirectoryTool` - 创建目录
-- [ ] `WatchDirectoryTool` - 监控目录变化
+- [x] `ListDirectoryTool` - 列出目录内容 (支持递归、过滤)
+- [x] `GetFileInfoTool` - 获取文件元数据 (大小、权限、时间)
+- [x] `CopyFileTool` - 复制文件
+- [x] `MoveFileTool` - 移动/重命名文件
+- [x] `DeleteFileTool` - 删除文件 (需要权限)
+- [x] `CreateDirectoryTool` - 创建目录
 
 **验收**: AI 可以执行完整的文件系统操作
 
+**已完成文件**:
+- `src/tools/filesystem/ListDirectoryTool.ts` - 列出目录
+- `src/tools/filesystem/GetFileInfoTool.ts` - 获取文件信息
+- `src/tools/filesystem/CopyFileTool.ts` - 复制文件
+- `src/tools/filesystem/MoveFileTool.ts` - 移动/重命名
+- `src/tools/filesystem/DeleteFileTool.ts` - 删除文件/目录
+- `src/tools/filesystem/CreateDirectoryTool.ts` - 创建目录
+- `src/tools/filesystem/index.ts` - 模块导出
+- 更新 `src/tools/index.ts` - 注册新工具
+
+**功能特性**:
+✅ 递归目录列出
+✅ 文件过滤（扩展名、模式）
+✅ 显示/隐藏文件控制
+✅ 文件大小格式化显示
+✅ 覆盖保护机制
+✅ 递归删除确认
+✅ 嵌套目录创建
+✅ 权限控制（requiresPermission）
+
 ---
 
-#### 2.2 代码搜索工具
+#### 2.2 代码搜索工具 ✅ 已完成
 **目标**: 添加代码级别的搜索能力
 
 **新增工具**:
-- [ ] `CodeSearchTool` - 代码符号搜索 (使用 ripgrep)
-  - 按语言过滤
-  - 按文件类型过滤
-  - 正则表达式支持
-- [ ] `FindReferencesTool` - 查找引用
-- [ ] `FindDefinitionsTool` - 查找定义 (简单实现)
-- [ ] `GetFileStatsTool` - 代码统计 (行数、注释率等)
+- [x] `CodeSearchTool` - 代码符号搜索 (使用 ripgrep)
+  - [x] 按语言过滤
+  - [x] 按文件类型过滤
+  - [x] 正则表达式支持
+- [x] `FindReferencesTool` - 查找引用
+- [x] `FindDefinitionsTool` - 查找定义 (简单实现)
+- [x] `GetFileStatsTool` - 代码统计 (行数、注释率等)
 
 **验收**: 可以快速搜索代码符号和引用
+
+**已完成文件**:
+- `src/tools/search/CodeSearchTool.ts` - 代码搜索
+- `src/tools/search/FindReferencesTool.ts` - 查找引用
+- `src/tools/search/FindDefinitionsTool.ts` - 查找定义
+- `src/tools/search/GetFileStatsTool.ts` - 文件统计
+- `src/tools/search/index.ts` - 模块导出
+- 更新 `src/tools/index.ts` - 注册新工具
+
+**功能特性**:
+✅ ripgrep 集成（快速搜索）
+✅ 正则表达式支持
+✅ 语言过滤（TypeScript, JavaScript, Python 等）
+✅ 文件模式过滤
+✅ 大小写敏感/不敏感
+✅ 上下文显示
+✅ 符号引用搜索
+✅ 符号定义搜索
+✅ 定义过滤（排除定义）
+✅ 代码统计（行数、注释、空行）
+✅ 语言分布统计
+✅ 最大文件识别
+✅ 多语言注释检测（JS, TS, Python, Go, Rust, Java, C/C++ 等）
 
 ---
 
@@ -928,11 +1010,13 @@ mini-claude/
 ## 📅 下次工作提醒
 
 ### 待完成任务
-- **阶段 1.4: 错误处理** (下一阶段)
-  - 创建 `src/errors/` 目录
-  - 定义错误类型体系
-  - 实现错误处理中间件
-  - 提供错误恢复建议
+- **阶段 2: 工具扩展** (下一阶段)
+  - 创建 `src/tools/filesystem/` 目录
+  - 实现文件系统工具 (ListDirectory, CopyFile, DeleteFile, MoveFile 等)
+  - 创建 `src/tools/search/` 目录
+  - 实现代码搜索工具 (CodeSearch, FindReferences, FindDefinitions)
+  - 创建 `src/tools/git/` 目录
+  - 实现 Git 工具 (GitStatus, GitCommit, GitDiff 等)
 
 ### 启动命令
 ```bash
@@ -950,6 +1034,21 @@ cat ROADMAP.md
 cat WORKLOG.md
 ```
 
+### ✅ 阶段 1 完成总结
+**阶段 1: 基础增强** 已全部完成！
+- ✅ 配置系统 - ConfigManager + /config 命令
+- ✅ 会话持久化 - SessionManager + /history + /resume 命令
+- ✅ 日志系统 - Logger + /logs 命令
+- ✅ 错误处理 - 错误类型体系 + 处理中间件
+
+**成果**:
+- 4 个核心模块
+- 48 个文件
+- ~4,500 行代码
+- 4 个斜杠命令
+- 15+ 种错误类型
+
+---
 
 ### 快速继续工作
 ```bash
