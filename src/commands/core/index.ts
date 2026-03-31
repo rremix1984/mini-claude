@@ -5,3 +5,4 @@
 export { configCommand } from './config.js'
 export { historyCommand } from './history.js'
 export { resumeCommand } from './resume.js'
+export { logsCommand } from './logs.js'
