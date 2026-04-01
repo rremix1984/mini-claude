@@ -1,9 +1,13 @@
-import type { ToolDefinition, ToolResult } from '../../../types.js'
+/**
+ * GitStatusTool - 查看 Git 仓库状态
+ */
+
+import type { ToolDefinition, ToolResult } from '../../types.js'
 import { execSync } from 'node:child_process'
 
-export const ${name}Tool: ToolDefinition = {
-  name: 'git_${name,,?toLower}',
-  description: 'Git ${name} operation',
+export const GitStatusTool: ToolDefinition = {
+  name: 'git_status',
+  description: 'View the Git repository status. Shows changed files, untracked files, staged files, and branch information.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -11,19 +15,41 @@ export const ${name}Tool: ToolDefinition = {
         type: 'string',
         description: 'Repository path (default: current directory)',
       },
+      short: {
+        type: 'boolean',
+        description: 'Use short format (default: false)',
+      },
     },
   },
   requiresPermission: false,
   execute: async (input) => {
-    const { path = '.' } = input as { path?: string }
+    const { path = '.', short = false } = input as { path?: string; short?: boolean }
+
     try {
-      const args = ['git', '-C', path, '${name}']
+      // Check if this is a Git repository
+      try {
+        execSync('git -C ' + path + ' rev-parse --git-dir', { encoding: 'utf-8', stdio: 'pipe' })
+      } catch {
+        return {
+          success: false,
+          output: '',
+          error: 'Not a Git repository: ' + path,
+        }
+      }
+
+      // Build git status command
+      const args = ['git', '-C', path, 'status']
+      if (short) {
+        args.push('-s')
+      }
+
       const result = execSync(args.join(' '), { encoding: 'utf-8' })
+
       return {
         success: true,
-        output: result,
+        output: result.trim(),
       }
-    } catch (error: any) {
+    } catch (error) {
       return {
         success: false,
         output: '',

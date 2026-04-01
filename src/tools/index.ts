@@ -34,9 +34,9 @@ import { LintCodeTool } from './project/LintCodeTool.js'
 
 // Git tools
 import { GitStatusTool } from './git/GitStatusTool.js'
-import { GitDiffTool } from './git/itDiffTool.js'
-import { GitLogTool } from './git/itLogTool.js'
-import { GitCommitTool } from './git/itCommitTool.js'
+import { GitDiffTool } from './git/GitDiffTool.js'
+import { GitLogTool } from './git/GitLogTool.js'
+import { GitCommitTool } from './git/GitCommitTool.js'
 import { GitBranchTool } from './git/GitBranchTool.js'
 import { GitStashTool } from './git/GitStashTool.js'
 
