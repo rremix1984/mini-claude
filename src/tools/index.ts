@@ -40,6 +40,17 @@ import { GitCommitTool } from './git/GitCommitTool.js'
 import { GitBranchTool } from './git/GitBranchTool.js'
 import { GitStashTool } from './git/GitStashTool.js'
 
+// Network tools
+import { WebFetchTool } from './network/WebFetchTool.js'
+import { HttpRequestTool } from './network/HttpRequestTool.js'
+import { ApiDocsTool } from './network/ApiDocsTool.js'
+
+// System tools
+import { GetSystemInfoTool } from './system/GetSystemInfoTool.js'
+import { GetProcessInfoTool } from './system/GetProcessInfoTool.js'
+import { GetEnvVarTool } from './system/GetEnvVarTool.js'
+import { WhoamiTool } from './system/WhoamiTool.js'
+
 export const ALL_TOOLS: ToolDefinition[] = [
   // Core tools (7)
   BashTool,
@@ -76,6 +87,17 @@ export const ALL_TOOLS: ToolDefinition[] = [
   GitCommitTool,
   GitBranchTool,
   GitStashTool,
+
+  // Network tools (3)
+  WebFetchTool,
+  HttpRequestTool,
+  ApiDocsTool,
+
+  // System tools (4)
+  GetSystemInfoTool,
+  GetProcessInfoTool,
+  GetEnvVarTool,
+  WhoamiTool,
 ]
 
 /**
@@ -122,4 +144,15 @@ export {
   GitCommitTool,
   GitBranchTool,
   GitStashTool,
+
+  // Network
+  WebFetchTool,
+  HttpRequestTool,
+  ApiDocsTool,
+
+  // System
+  GetSystemInfoTool,
+  GetProcessInfoTool,
+  GetEnvVarTool,
+  WhoamiTool,
 }
